@@ -12,6 +12,9 @@ ballots = [
     [2,1,3],
     [2,3,1],
     [3,2,1],
+    [1,2,3],
+    [1,2,3],
+    [1,2,3],
 ]
 
 """
@@ -23,51 +26,49 @@ If a candidate wins by > 50% then they win
 Else remove candidate(s) in last place from each ballot
 """
 
-def aussie_vote(ballots):
-
-    print('\n\nLOOP START')
-    print('Ballots: ' + str(ballots))
+def elect(ballots):
     
-    votes = {}
-    vote_count = 0
-    
-    # Count first place votes
+    # Count first place votes for each candidate
+    d = {}
     for ballot in ballots:
         first = ballot[0]
-        if first not in votes.keys():
-            votes[first] = 1
+        if first in d.keys():
+            d[first] += 1
         else:
-            votes[first] += 1
-        vote_count += 1
-    print('Votes: ' + str(votes))
-    print('Vote Count: ' + str(vote_count))
+            d[first] = 1
     
-    # Find first place
-    max_val = max(votes.values())
-    max_key = []
-    for k, v in votes.items():
-        if v == max_val:
-            max_key.append(k)
-    print('Max Val: ' + str(max_val))
-    print('Max Key: ' + str(max_key))
+    # Find most votes
+    maxv = max(d.values())
+    maxk = []
+    for k, v in d.items():
+        if v == maxv:
+            maxk.append(k)
+    
+    # Find total number of votes
+    totv = 0
+    for v in d.values():
+        totv += v
+    
+    # Find total number of candidates
+    totk = len(d.keys())
     
     # Clear winner?
-    if max_val/vote_count > .5 or len(votes) == 1:
-        print('TRUE')
-        return max_key
+    if maxv/totv > .5 or len(maxk) == totk:
+        return maxk
+        
+    # If no clear winner, remove losers and repeat
     else:
-        # If no clear winner, remove last place and repeat
-        min_val = min(votes.values())
-        min_key = []
-        for k, v in votes.items():
-            if v == min_val:
-                min_key.append(k)
-        for m in min_key:
-            for ballot in ballots:
-                ballot.remove(m)
-        aussie_vote(ballots)
+        minv = min(d.values())
+        mink = []
+        for k, v in d.items():
+            if v == minv:
+                mink.append(k)
+        for ballot in ballots:
+            for k in mink:
+                ballot.remove(k)
+        return elect(ballots)
 
 
-# Test function
-winner = aussie_vote(ballots)
-print(winner)
+
+# Test
+print(elect(ballots))
