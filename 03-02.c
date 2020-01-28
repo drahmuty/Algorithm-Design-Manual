@@ -1,41 +1,23 @@
 #include <stdio.h>
 
-struct list {
-    item_type item;
-    struct list *next;
-} list;
+typedef struct Node {
+    char *value;
+    struct Node *next;
+} Node;
 
-int main(void)
+void reverse(Node **head) 
 {
-    return 0;
-}
-
-void reverse(*list) {
-    *p;
-    last = NULL;
+    Node *prev, *curr, *next;
+    prev = NULL;
+    curr = *head;
+    next = NULL;
     
-    if (list->next == NULL) {
-        # set item as the root
-        return;
+    while (curr) {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
     }
-    else {
-        last = list;
-        
-    }
+    *head = prev;
+    return;
 }
-
-/*
-Writing psuedo code instead.
-
-Given a linked list...
-*p;
-last = NULL;
-while (l->next != NULL) {
-    p = l;
-    l->next = last;
-    }
-    
-
-
-
-*/
