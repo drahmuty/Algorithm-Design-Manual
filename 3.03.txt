@@ -1,1 +1,14 @@
+a)
+When last item of array is < (length of array / 2)
+    Copy array items and store in an array half the size
+    Delete original array
+    
+This could be a problem if there's a scenario when items are repeatedly inserted and deleted around a 2^n index of the array because it would keep triggering the array to shrink and expand.
 
+It would be fine if the array started large and then grew smaller over time.
+
+
+
+b)
+[looked up solution]
+When array is 1/4 full, shrink to half its current size.
