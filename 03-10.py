@@ -19,12 +19,19 @@ def main(items, tree, total):
     countnodes(tree)
 
 def bestfit(item, tree, total):
-    max = total - item
-    while tree.value <= max:
+    target = total - item
+    if tree.value == target:
+        tree.value = tree.value + item
+    elif tree.value < target:
         if tree.right is None:
-            tree.value = tree.value + item
-            break
-        tree = tree.right
+            bestfit(item, tree, total-1) # taking a break. This isn't complete
+        else:
+            bestfit(item, tree.right, total)
+    else:
+        if tree.left is None:
+            tree.left = Tree(item)
+        else:
+            bestfit(item, tree.left, total)
         
 def worstfit(item, tree, total):
     while tree.left is not None:
