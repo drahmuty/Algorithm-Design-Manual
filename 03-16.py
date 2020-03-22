@@ -1,7 +1,7 @@
 # Characters to skip
 skip = [' ', '\n', '\t', '.', ',', ':', ';', '?', '!']
 
-# Main function (second version, using object oriented programming)
+# Main function
 def main():
     doc = Doc('file.txt')
     words = LinkedList()
