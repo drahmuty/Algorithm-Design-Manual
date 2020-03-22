@@ -4,14 +4,18 @@ skip = [' ', '\n', '\t', '.', ',', ':', ';', '?', '!']
 # Main function
 def main():
     doc = Doc('file.txt')
-    words = LinkedList()
+    words_list = LinkedList()
     w = doc.next_word()
+    words_tree = Tree(w)
     while w:
-        if not words.search(w):
-            words.insert(w)
+        words_list.insert(w.lower())
+        words_tree.insert(w.lower())
         w = doc.next_word()
-    words.array()
-    return
+    
+    print('\nLINKED LIST:')
+    words_list.print_items()
+    print('\nBINARY TREE:')
+    words_tree.print_items()
 
 # Document class
 class Doc():
@@ -46,7 +50,7 @@ class LinkedList():
     def __init__(self):
         self.head = None
     
-    def show(self):
+    def print_items(self):
         c = self.head
         while c:
             print(c.value)
@@ -69,6 +73,8 @@ class LinkedList():
         return False            
 
     def insert(self, value):
+        if self.search(value):
+            return
         temp = self.head
         self.head = Node(value)
         self.head.next = temp
@@ -85,20 +91,45 @@ class LinkedList():
                 return
             prev = c
             c = c.next
-            
-            
-# Main function (first version, using functional programming)
-# def words(file):
-#     with open(file) as file_object:
-#         contents = file_object.read().strip()
-#         d = LinkedList()
-#         word = ''
-#         for c in contents:
-#             if c in skip:
-#                 if word and not d.search(word):
-#                     d.insert(word)
-#                 word = ''
-#                 continue
-#             else:
-#                 word += c
-#     d.array()
+
+# Binary tree class
+class Tree():
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+    
+    def search(self, value):
+        if not self:
+            return False
+        if value < self.value:
+            if self.left:
+                return self.left.search(value)
+            else:
+                return False
+        elif value > self.value:
+            if self.right:
+                return self.right.search(value)
+            else:
+                return False
+        else:
+            return True
+    
+    def insert(self, value):
+        if value < self.value:
+            if self.left:
+                self.left.insert(value)
+            else:
+                self.left = Tree(value)
+        elif value > self.value:
+            if self.right:
+                self.right.insert(value)
+            else:
+                self.right = Tree(value)
+
+    def print_items(self):
+        if self.left:
+            self.left.print_items()
+        print(self.value)
+        if self.right:
+            self.right.print_items()
