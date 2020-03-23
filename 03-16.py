@@ -133,3 +133,37 @@ class Tree():
         print(self.value)
         if self.right:
             self.right.print_items()
+
+# Hash table class
+class HashTable:
+    def __init__(self):
+        self.dict = [None] * 1000
+
+    def hash(self, x):
+        i = 0
+        y = 0
+        length = len(x)
+        for c in x:
+            if ord(c) < 32:
+                z = ord(c) - 0
+            elif ord(c) < 64:
+                z = ord(c) - 31
+            elif ord(c) < 96:
+                z = ord(c) - 63
+            else:
+                z = ord(c) - 95
+            i += 1
+            y += 26 ^ (length - i) * z
+        return y % 999
+
+    def insert(self, x):
+        # generate hash key
+        k = self.hash(x)
+        # store x in array
+        self.dict[k] = x
+        # if there's already a value there, insert it in the linked list
+    
+    def search(self, x):
+        k = self.hash(x)
+        return self.dict[k]
+        # need to extend this to handle linked lists
