@@ -4,18 +4,25 @@ skip = [' ', '\n', '\t', '.', ',', ':', ';', '?', '!']
 # Main function
 def main():
     doc = Doc('file.txt')
-    words_list = LinkedList()
     w = doc.next_word()
+    words_list = LinkedList()
     words_tree = Tree(w)
+    words_hash = HashTable()
     while w:
         words_list.insert(w.lower())
         words_tree.insert(w.lower())
+        words_hash.insert(w.lower())
         w = doc.next_word()
-    
     print('\nLINKED LIST:')
     words_list.print_items()
+    print(words_list.item_count())
     print('\nBINARY TREE:')
     words_tree.print_items()
+    print(tree_count(words_tree))
+    print('\nHASH TABLE:')
+    words_hash.print_items()
+    print(words_hash.item_count)
+
 
 # Document class
 class Doc():
@@ -24,6 +31,7 @@ class Doc():
             self.contents = file_obj.read().strip()
         self.index = 0
         self.length = len(self.contents)
+        self.word_count = 0
 
     def next_word(self):
         word = ''
@@ -32,6 +40,7 @@ class Doc():
             c = self.contents[self.index]
             if c in skip:
                 if stop:
+                    self.word_count += 1
                     return word
                 self.index += 1
                 continue
@@ -91,6 +100,14 @@ class LinkedList():
                 return
             prev = c
             c = c.next
+    
+    def item_count(self):
+        i = 0
+        c = self.head
+        while c:
+            i += 1
+            c = c.next
+        return i
 
 # Binary tree class
 class Tree():
@@ -134,36 +151,62 @@ class Tree():
         if self.right:
             self.right.print_items()
 
+def tree_count(tree):
+    i = 0
+    if tree:
+        i += 1
+    if tree.left:
+        i += tree_count(tree.left)
+    if tree.right:
+        i += tree_count(tree.right)
+    return i
+    
+def tree_list(tree):
+    arr = []
+    def helper(x):
+        if x.left:
+            helper(x.left)
+        arr.append(x.value)
+        if x.right:
+            helper(x.right)
+    helper(tree)
+    return arr
+    
+
 # Hash table class
 class HashTable:
     def __init__(self):
-        self.dict = [None] * 1000
+        self.size = 1000
+        table = [[] for a in range(self.size)]
+        self.dict = table
+        self.item_count = 0
 
     def hash(self, x):
-        i = 0
-        y = 0
-        length = len(x)
-        for c in x:
-            if ord(c) < 32:
-                z = ord(c) - 0
-            elif ord(c) < 64:
-                z = ord(c) - 31
-            elif ord(c) < 96:
-                z = ord(c) - 63
-            else:
-                z = ord(c) - 95
-            i += 1
-            y += 26 ^ (length - i) * z
-        return y % 999
+        return hash(x) % self.size
 
     def insert(self, x):
-        # generate hash key
+        if self.search(x):
+            return
         k = self.hash(x)
-        # store x in array
-        self.dict[k] = x
-        # if there's already a value there, insert it in the linked list
-    
+        self.dict[k].append(x)
+        self.item_count += 1
+
     def search(self, x):
         k = self.hash(x)
-        return self.dict[k]
-        # need to extend this to handle linked lists
+        for v in self.dict[k]:
+            if v == x:
+                return True
+        return False
+    
+    def delete(self, x):
+        if not self.search(x):
+            print(str(x) + ' not found')
+            return
+        k = self.hash(x)
+        self.dict[k].remove(x)
+        self.item_count -= 1
+
+    def print_items(self):
+        for x in self.dict:
+            for y in x:
+                print(y)
