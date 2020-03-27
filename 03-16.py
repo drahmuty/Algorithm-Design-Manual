@@ -4,14 +4,15 @@ skip = [' ', '\n', '\t', '.', ',', ':', ';', '?', '!']
 # Main function
 def main():
     doc = Doc('file.txt')
-    w = doc.next_word()
+    w = doc.next_word().lower()
     words_list = LinkedList()
     words_tree = Tree(w)
     words_hash = HashTable()
     while w:
-        words_list.insert(w.lower())
-        words_tree.insert(w.lower())
-        words_hash.insert(w.lower())
+        w = w.lower()
+        words_list.insert(w)
+        words_tree.insert(w)
+        words_hash.insert(w)
         w = doc.next_word()
     print('\nLINKED LIST:')
     words_list.print_items()
