@@ -15,8 +15,29 @@ def main(x):
 
 # Decryption program
 def decrypt():
+
+    # Open file
     with open('encrypted_file.txt') as file_obj:
         contents = file_obj.read().strip()
+    
+    # Count each letter and store in dictionary
+    letter_dict = Dict()
+    for c in contents:
+        if ord(c) > 64 and ord(c) < 91:
+            letter_dict.insert(c)
+    
+    # Print dictionary
+    print(letter_dict.dict)
+
+    # Insert dictionary items into binary tree
+
+    # Return ordered list by letter count
+        # Pair letter with ordered list of letter frequency
+    
+    # Replace letters with their paired letter
+
+    # Print contents of file
+    
 
 # Dictionary data structure
 class Dict:
