@@ -1,6 +1,8 @@
+letter_frequency_list = ('E','T','A','O','I','N','S','R','H','D','L','U','C','M','F','Y','W','G','P','B','V','K','X','Q','J','Z')
+
 # Encrypt file
 def encrypt(x):
-    with open('file.txt') as file_obj:
+    with open('moby.txt') as file_obj:
         contents = file_obj.read().strip()
     encrypted_contents = cshift(contents, x)
     with open('encrypted_file.txt', 'w') as file_w:
@@ -20,24 +22,37 @@ def decrypt():
     with open('encrypted_file.txt') as file_obj:
         contents = file_obj.read().strip()
     
-    # Count each letter and store in dictionary
+    # Store each letter and its count in a hash table
     letter_table = HashTable()
     for c in contents:
         letter_table.insert(c)
-    
-    # Print dictionary
-    print(letter_table.dict)
 
-    # Insert dictionary items into binary tree
+    # Create ordered list by letter count
+    letter_table_sorted = []
+    c = letter_table.max_pop()
+    while c:
+        letter_table_sorted.append(c)
+        c = letter_table.max_pop()
 
-    # Return ordered list by letter count
-        # Pair letter with ordered list of letter frequency
-    
-    # Replace letters with their paired letter
+    # Pair letter with ordered list of letter frequency
+    letter_pairs = HashTablePairs()
+    i = 0
+    for c in letter_table_sorted:
+        old = c[0]
+        new = letter_frequency_list[i]
+        letter_pairs.insert((old, new))
+        i += 1
+     
+    # Replace each letter with its paired letter
+    decrypted_contents = ''
+    for c in contents:
+        new = letter_pairs.search(c)
+        if new:
+            c = new
+        decrypted_contents += c
 
     # Print contents of file
-    
-    
+    print(decrypted_contents)
 
 # Caesar shift (text = string; x = integer shift value)
 def cshift(text, x):
@@ -80,6 +95,26 @@ class HashTable:
             k = self.hash(x)
             self.dict[k] = 0
 
+    def max(self):
+        k = max_key = 0
+        max_val = 0
+        for d in self.dict:
+            if d > max_val:
+                max_key = k
+                max_val = d
+            k += 1
+        return max_key, max_val
+
+    def max_pop(self):
+        max = self.max()
+        max_key = chr(max[0] + 65)
+        max_val = max[1]
+        if max_val < 1:
+            return None
+        self.delete(max_key)
+        return max_key, max_val
+
+
 # Document class
 class Doc():
     def __init__(self, filename):
@@ -104,3 +139,32 @@ class Doc():
             stop = True
             word += c
             self.index += 1
+
+def replace_letter(string, old, new):
+    new_string = ''
+    for s in string:
+        if s == old:
+            s = new
+        new_string += s
+    return new_string
+
+# Hash table to store old-new letter pairs
+class HashTablePairs:
+    def __init__(self):
+        self.size = 1000
+        table = [None for a in range(self.size)]
+        self.dict = table
+
+    def hash(self, x):
+        return hash(x) % self.size
+
+    def insert(self, x):
+        k = self.hash(x[0])
+        self.dict[k] = x[1]
+    
+    def search(self, x):
+        k = self.hash(x)
+        if self.dict[k]:
+            return self.dict[k]
+        else:
+            return False
