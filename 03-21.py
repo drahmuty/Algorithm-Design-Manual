@@ -73,6 +73,34 @@ def compare_helper(a, b):
     return c
 
 
+# Alternative solution
+def comp(a, b):
+
+    # Data values don't match    
+    if a.data != b.data:
+        return False
+
+    # Remaining left and right branches for both trees
+    elif a.left and b.left and a.right and b.right:
+        return comp(a.left, b.left) and comp(a.right, b.right)
+    
+    # Remaining left branch for both trees
+    elif a.left and b.left and not a.right and not b.right:
+        return comp(a.left, b.left)
+
+    # Remaining right branch for both trees    
+    elif not a.left and not b.left and a.right and b.right:
+        return comp(a.right, b.right)
+
+    # No remaining branches for either tree        
+    elif not a.left and not b.left and not a.right and not b.right:
+        return True
+
+    # Nonidentical branch structure between trees
+    else:
+        return False
+
+
 # Generate two identical trees for testing
 t1 = Tree(50)
 t2 = Tree(50)
