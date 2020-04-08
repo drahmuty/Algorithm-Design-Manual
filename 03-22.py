@@ -94,8 +94,10 @@ def tree_to_list(t):
     # Use recursive helper function to traverse tree and insert each node value into linked list
     return tree_to_list_helper(t, linked_list)
 
+
+
 # Helper function to convert binary tree to linked list
-# This can also be used standalone if you provide an existing linked list
+# This can also be used standalone with an existing linked list
 def tree_to_list_helper(t, l):
     if t.left:
         tree_to_list_helper(t.left, l)
@@ -107,6 +109,18 @@ def tree_to_list_helper(t, l):
 
 
 # Create binary tree for testing
-z = Tree(50)
-for x in range(100):
-    z.insert(random.randint(1,10000))
+a = Tree(50)
+for r in range(10):
+    a.insert(random.randint(1,100))
+    
+    
+
+# Driver program
+print('\nTree data:')
+a.show()
+b = tree_to_list(a)
+print('\nTree data in linked list:')
+b.show()
+tree_to_list_helper(a, b)
+print('\nAdding tree data again to existing linked list:')
+b.show()
