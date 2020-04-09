@@ -1,3 +1,4 @@
+import random
 
 # Linked list node class
 class LinkedListNode:
@@ -36,8 +37,8 @@ print('Contents of z:')
 z.show()
 
 
-# Reverse linked list, with recursion
-def reverse_list(x):
+# Iterative linked list reversal
+def reverse_list_iter(x):
     p = None
     c = x.head
     while c:
@@ -46,3 +47,15 @@ def reverse_list(x):
         p = c
         c = n
     x.head = p
+
+
+# Recursive linked list reversal
+def reverse_list_recur(x):
+    if not x.head.next:
+        return x.head
+    y = x.head
+    x.head = x.head.next
+    x = rev(x)
+    x.next = y
+    x.next.next = None
+    return x.next
