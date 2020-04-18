@@ -11,16 +11,20 @@ Below is my own implementation.
 
 # Find loop in linked list
 def findloop(x):
+    if not x.head:
+        return False                # Head does not exist
     slow = x.head
     fast = x.head.next
-    while fast:
-        if (fast == slow):
-            break                   # Loop found
-        if fast.next:
+    while True:
+        if not fast:
+            return False
+        elif (fast == slow):
+            break                   # Loop exists; Continue with rest of program
+        elif fast.next:
             slow = slow.next
             fast = fast.next.next
         else:
-            return False            # Loop not found
+            return False
     fast = fast.next    
     loop_len = 1
     while fast != slow:
