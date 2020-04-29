@@ -19,11 +19,9 @@ def jolly(nums):
     nums_arr = [False for i in range(nums_len - 1)]
     i = 0
     while i < (nums_len - 1):
-        print(nums_arr)
         curr_num = nums[i]
         next_num = nums[i + 1]
         diff = abs(curr_num - next_num)
-        print(curr_num, next_num, diff)
         if diff > (nums_len - 1) or diff < 1:
             return False
         elif nums_arr[diff - 1] == False:
