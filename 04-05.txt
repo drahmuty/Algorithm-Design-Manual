@@ -1,0 +1,8 @@
+Scan through list of numbers and count the number of occurences of each number. O(n) time.
+
+Store these counts in a hash table. If there's a known upper bound on the possible values for n numbers
+then you can use the number itself as an index into the array. Otherwise, create a hash table of an
+arbitrary size and has each value to store its count.
+
+Find the max in the hash table. O(n) time. You could make it O(1) time if you keep track of the max
+during each insertion/deletion. Either way, worst case is O(n) time. For the specific case of modes, allow multiple maxes. 
