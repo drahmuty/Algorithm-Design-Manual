@@ -1,97 +1,39 @@
-"""
-4-10. Given a set S of n integers and an integer T, 
-give an O(nk−1logn) algorithm to test whether k of 
-the integers in S add up to T.
-"""
-
-"""
-inputs:
-s (list of integers)
-t (target sum)
-k (number of addends)
-
-output:
-true or false
-or return addends?
-
-program steps:
-sort s
-
-recursive
-    remove one element from s
-    target sum = t - currently selected element from s
-    k--
-
-base case when k = 0
-binary search for remaining set of numbers
-
-"""
-
-
 def sum_of_elements(s, t, k):
+    # s: list of integers
+    # t: target sum
+    # k: number of addends
     
-    # Return false if k is greater than the number of elements in s
     if k > len(s):
-        return False
-    
-    # Sort list of elements
-    s.sort()
-    
-    # Run recursive helper function
+        return 'Error: k greater than list length'    
+    s.sort()    
     return soe_recur(s, t, k)
-
-
-def soe_recur(s, t, k):
-    for a in s:
-        b = t - s[a]
-        if k <= 2:
-            # if binary search through remaining list for b is true:
-                # return True
-            return
-        else:
-            return soe_recur(s[a+1:], b, k-1)
+        
+        
+def soe_recur(s, t, k):             # recursive helper function
+    if k == 1:                      # base case when one remaining addend
+        if binary_search(t, s):
+            return True
+    i = 0
+    for v in s:
+        y = soe_recur(s[i+1:], t-v, k-1)
+        if y:
+            return True
+        i += 1
 
 
 def binary_search(k, s):
     l, h = 0, len(s) - 1
-    while l < h:
+    while l <= h:
         m = (l + h) // 2
         c = s[m]
         if k == c:
             return True
-        elif k < c:
+        if k < c:
             h = m - 1
         elif k > c:
             l = m + 1
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+s = [5,4,2,7,8,9,3,1,6]
+for i in range(50):
+    print(i, sum_of_elements(s, i, 9))
