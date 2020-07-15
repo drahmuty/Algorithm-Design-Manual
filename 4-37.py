@@ -18,3 +18,11 @@ def selection_sort(A):
             if A[j] < A[min_index]:
                 min_index = j
         A[i], A[min_index] = A[min_index], A[i]
+
+# Insertion sort
+def insertion_sort(A):
+    for i in range(len(A)):
+        for j in range(i-1, -1, -1):
+            if A[i] < A[j]:
+                A[i], A[j] = A[j], A[i]
+                i -= 1
