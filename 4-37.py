@@ -26,3 +26,5 @@ def insertion_sort(A):
             if A[i] < A[j]:
                 A[i], A[j] = A[j], A[i]
                 i -= 1
+            else:
+                break
