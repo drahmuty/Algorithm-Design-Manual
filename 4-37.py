@@ -36,3 +36,66 @@ def insertion_sort(A):
         while j > 0 and A[j] < A[j-1]:
             A[j], A[j-1] = A[j-1], A[j]
             j -= 1
+
+# Heapsort
+def heapsort(items):
+    h = Heap()
+    h.make_heap(items)
+    for i in range(len(items)):
+        items[i] = h.extract_min()
+        
+class Heap:
+    def __init__(self):
+        self.q = [None]
+        self.n = 0
+    
+    def parent(self, x):
+        if x <= 1:
+            return None
+        else:
+            return x // 2
+
+    def child_left(self, x):
+        return 2 * x
+    
+    def child_right(self, x):
+        return 2 * x + 1
+    
+    def insert(self, x):
+        self.q.append(x)
+        self.n += 1
+        self.bubble_up(self.n)
+    
+    def bubble_up(self, x):
+        p = self.parent(x)
+        if not p:
+            return
+        if self.q[p] > self.q[x]:
+            self.q[p], self.q[x] = self.q[x], self.q[p]
+            self.bubble_up(p)
+    
+    def make_heap(self, items):
+        for item in items:
+            self.insert(item)
+    
+    def extract_min(self):
+        if self.n <=0:
+            print('Empty')
+        else:
+            min = self.q[1]
+            self.q[1] = self.q[self.n]
+            self.n -= 1
+            self.bubble_down(1)
+        return min
+    
+    def bubble_down(self, x):
+        c = self.child_left(x)
+        min_index = x
+        for i in range(0, 2):
+            if (c+i) > self.n:
+                break
+            if self.q[min_index] > self.q[c+i]:
+                min_index = c+i
+        if min_index != x:
+            self.q[x], self.q[min_index] = self.q[min_index], self.q[x]
+            self.bubble_down(min_index)
