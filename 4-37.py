@@ -99,3 +99,28 @@ class Heap:
         if min_index != x:
             self.q[x], self.q[min_index] = self.q[min_index], self.q[x]
             self.bubble_down(min_index)
+
+# Mergesort
+def mergesort(s, low, high):
+    if low < high:
+        mid = (low + high) // 2
+        mergesort(s, low, mid)
+        mergesort(s, mid+1, high)
+        merge(s, low, mid, high)
+
+def merge(s, low, mid, high):
+    buffer1 = s[low:mid+1]
+    buffer2 = s[mid+1:high+1]
+    i = low
+    while buffer1 and buffer2:
+        if buffer1[0] < buffer2[0]:
+            s[i] = buffer1.pop(0)
+        else:
+            s[i] = buffer2.pop(0)
+        i += 1
+    while buffer1:
+        s[i] = buffer1.pop(0)
+        i += 1
+    while buffer2:
+        s[i] = buffer2.pop(0)
+        i += 1
