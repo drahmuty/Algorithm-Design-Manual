@@ -144,3 +144,31 @@ def partition(s, l, h):
             firsthigh += 1
     s[p], s[firsthigh] = s[firsthigh], s[p]
     return firsthigh
+
+
+
+# Return all unique words in a file.
+def distinct_words():
+    with open('nyc.txt') as f:
+        contents = f.read().strip()
+    contents = contents.replace('.', '')
+    contents = contents.replace(',', '')
+    contents = contents.replace(';', '')
+    contents = contents.replace(':', '')
+    words_array = contents.split()
+    
+    # Sort words
+    quicksort(words_array)
+
+    # List all unique words
+    unique_words = []
+    prev_word = None
+    for w in words_array:
+        if w != prev_word:
+            unique_words.append(w)
+            prev_word = w
+            print(w)
+    
+    return unique_words
+
+distinct_words()
