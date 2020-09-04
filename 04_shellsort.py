@@ -1,3 +1,8 @@
+"""
+From UVA programming challenge 110407
+http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.111.2131&rep=rep1&type=pdf
+"""
+
 from collections import OrderedDict
 
 def shellsort(x, y):
