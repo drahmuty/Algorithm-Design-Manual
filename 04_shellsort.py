@@ -1,8 +1,28 @@
 """
-From UVA programming challenge 110407
+UVA programming challenge 110407
 http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.111.2131&rep=rep1&type=pdf
 """
 
+# UPDATED
+
+def shellsort3(unsorted, sorted):
+    # Find the number of items n out of place. 
+    # Then return the lowest n items in desc order.
+    n = 0
+    i = j = len(unsorted)-1
+    while i >= 0:
+        if unsorted[i] != sorted[j]:
+            n += 1
+            i -= 1
+        else:
+            i -= 1
+            j -= 1
+    for k in range(n-1, -1, -1):
+        print(sorted[k])
+
+
+
+# 1ST ATTEMPT
 from collections import OrderedDict
 
 def shellsort(x, y):
