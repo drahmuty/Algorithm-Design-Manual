@@ -78,37 +78,41 @@ class Graph:
 
 
 
-# Build graph of 0000 through 9999
-# Insert all neighboring edges for +- 1000, 100, 10, 1
-# Find shortest path that does not pass through forbidden vertices
-
-def int_to_str(a,b,c,d):
+# Create a string representation of integers
+def int_to_str(a, b, c, d):
     return str(a) + str(b) + str(c) + str(d)
 
 
-
+# Main program
+# Return smallest number of wheel turns required to reach the 
+# target result or return None if there is no path.
 def wheels(start, end, forbidden_vertices):
     g = Graph()
     a = b = c = d = 0
     
+    # Create dictionary of forbidden vertices for faster lookup time
+    forbidden_vertices_dict = defaultdict(str)
+    for f in forbidden_vertices:
+        forbidden_vertices_dict[f] = True
+    
     # Create graph, skipping forbidden vertices
     while True:
-        v = int_to_str(a,b,c,d)
-        if v in forbidden_vertices:
+        v = int_to_str(a, b, c, d)
+        if forbidden_vertices_dict[v]:
             print('Forbidden:', v)
         else:
             w = int_to_str(((a + 1) % 10), b, c, d)
             x = int_to_str(a, ((b + 1) % 10), c, d)
             y = int_to_str(a, b, ((c + 1) % 10), d)
             z = int_to_str(a, b, c, ((d + 1) % 10))
-            if w not in forbidden_vertices:
-                g.add_edge(v,w)
-            if x not in forbidden_vertices:
-                g.add_edge(v,x)
-            if y not in forbidden_vertices:
-                g.add_edge(v,y)
-            if z not in forbidden_vertices:
-                g.add_edge(v,z)
+            if not forbidden_vertices_dict[w]:
+                g.add_edge(v, w)
+            if not forbidden_vertices_dict[x]:
+                g.add_edge(v, x)
+            if not forbidden_vertices_dict[y]:
+                g.add_edge(v, y)
+            if not forbidden_vertices_dict[z]:
+                g.add_edge(v, z)
         
         # Increment vertex
         d += 1
@@ -124,9 +128,11 @@ def wheels(start, end, forbidden_vertices):
         if a > 9:
             break
     
+    # Run BFS and find shortest path, if one exists
     g.bfs(start)
     g.find_path(start, end)
     
+    # Return path length, if one exists
     if g.path:
         return len(g.path)-1
     else:
