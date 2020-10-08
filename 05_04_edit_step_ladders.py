@@ -78,15 +78,11 @@ def step_ladder(words):
 
     g = Graph()
 
-    first_v = None
-
     # Add edges to graph
     for i in range(0, len(words)):
         for j in range(i+1, len(words)):
             if is_edit_step(words[i], words[j]):
                 g.add_edge(words[i], words[j])
-                if not first_v:
-                    first_v = words[i]
 
     g.print_graph()
 
