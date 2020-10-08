@@ -43,101 +43,19 @@ class Graph:
 
         while(q):
             v = q.popleft()
-            print('process vertex early', v)
             if pve:
                 pve(v)
             self.processed[v] = True
             for y in self.graph[v]:
                 if not self.processed[y] or self.directed:
-                    print('process edge', v, y)
                     if pe:
                         pe(v, y)
                 if not self.discovered[y]:
                     q.append(y)
                     self.discovered[y] = True
                     self.parent[y] = v
-            print('process vertex late', v)
             if pvl:
                 pvl(v)
-
-    # Depth-first search
-    def dfs(self, v, pve=None, pe=None, pvl=None):
-        if self.finished:
-            return
-        self.discovered[v] = True
-        self.time += 1
-        self.entry_time[v] = self.time
-        
-        print('process vertex early', v)
-        if pve:
-            pve(v)
-        
-        for y in self.graph[v]:
-            if not self.discovered[y]:
-                self.parent[y] = v
-                print('tree edge', v, y)
-                if pe:
-                    pe(v, y)
-                self.dfs(y, pve, pe, pvl)
-            elif not self.processed[y] or self.directed:
-                if not self.directed:
-                    print('back edge', v, y)
-                else:
-                    print('directed edge', v, y)
-                if pe:
-                    pe(v, y)
-                if self.finished:
-                    return
-
-        print('process vertex late', v)
-        if pvl:
-            pvl(v)
-        self.time += 1
-        self.exit_time[v] = self.time
-        self.processed[v] = True
-    
-    # Finding cycles
-    def find_cycle(self, x, y):
-        if self.parent[x] != y:
-            print('cycle from', y, 'to', x)
-            self.finished = True
-
-    # Bipartite test
-    def bipartite(self):
-        self.is_bipartite = True
-        self.color = defaultdict(str)
-        self.initialize_search()
-
-        for v in self.graph:
-            if not self.discovered[v]:
-                self.color[v] = 'BLACK'
-                self.bfs(v, None, self.bipartite_process_edge)
-        
-        print(self.is_bipartite)
-        return self.is_bipartite
-        
-    def bipartite_process_edge(self, x, y):
-        if self.color[x] == self.color[y]:
-            self.is_bipartite = False
-        if self.color[x] == 'BLACK':
-            self.color[y] = 'WHITE'
-        elif self.color[x] == 'WHITE':
-            self.color[y] = 'BLACK'
-
-    # Find path
-    def find_path(self, start, end):
-        if start == end:
-            print('Start')
-            print(end)
-            if not self.finished:
-                self.path.append(end)
-        elif end == 0:
-            self.finished = True
-        else:
-            self.find_path(start, self.parent[end])
-            print(end)
-            if not self.finished:
-                self.path.append(end)
 
     # Calculate graph depth
     def get_depth(self, v):
@@ -170,7 +88,7 @@ def step_ladder(words):
                 if not first_v:
                     first_v = words[i]
 
-    print(graph)
+    g.print_graph()
 
     # BFS through graph, starting at first word
     # Track vertex depth and max depth with custom
@@ -247,5 +165,5 @@ print(step_ladder(words))
 
 print()
 
-words = ['cat', 'hat', 'mat', 'sat', 'grow', 'row', 'crow', 'crowd', 'ham', 'sham']
+words = ['cat', 'hat', 'ham', 'him', 'tim', 'trim', 'grow', 'row', 'crow', 'crowd']
 print(step_ladder(words))
