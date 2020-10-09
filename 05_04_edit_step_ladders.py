@@ -137,16 +137,7 @@ def is_edit_step(x, y):
 
     # y bigger than x by exactly 1 letter
     elif y_len - x_len == 1:
-        i = j = 0
-        while j < x_len:
-            if i - j > 1:
-                return False
-            elif y[i] == x[j]:
-                i += 1
-                j += 1
-            else:
-                i += 1        
-        return True
+        return is_edit_step(y, x)
     
     # More than 1 letter difference in size
     else:
