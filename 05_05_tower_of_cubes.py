@@ -1,3 +1,6 @@
+# Work in progress as of 2020-10-09.
+# This is not a properly working solution. 
+
 from collections import defaultdict, deque
     
 # Adjacency list graph representation
@@ -34,6 +37,10 @@ class Graph:
         self.finished = False
         self.path = []
         self.depth = defaultdict(int)
+        self.order = deque()
+        self.path = deque()
+        self.path_depth = 0
+        self.max_path_depth = 0
 
     # Breadth-first search
     def bfs(self, v, pve=None, pe=None, pvl=None):
@@ -57,6 +64,45 @@ class Graph:
             if pvl:
                 pvl(v)
 
+    # Depth-first search
+    def dfs(self, v, pve=None, pe=None, pvl=None):
+
+        if self.finished:
+            return
+        
+        self.discovered[v] = True
+        self.time += 1
+        self.entry_time[v] = self.time
+
+        if pve:
+            pve(v)
+
+        print(self.path_depth)
+        print(self.path)
+
+        
+        for y in self.graph[v]:
+            if not self.discovered[y]:
+                self.parent[y] = v
+                if pe:
+                    pe(v, y)
+                self.dfs(y, pve, pe, pvl)
+            elif not self.processed[y] or self.directed:
+                if pe:
+                    pe(v, y)
+        
+        if self.finished:
+            return
+        
+        if pvl:
+            pvl(v)
+        
+        self.time += 1
+        self.exit_time[v] = self.time
+        self.order.appendleft(v)
+
+        self.processed[v] = True
+
     # Calculate graph depth
     def get_depth(self, v):
         if self.parent[v]:
@@ -65,6 +111,22 @@ class Graph:
             self.depth[v] = 1
         if self.depth[v] > self.max_depth:
             self.max_depth = self.depth[v]
+
+    # PVE for longest path
+    def lp_early(self, v):
+        self.path_depth += 1
+        self.path.append(v)
+
+    # PVL for longest path
+    def lp_late(self, v):
+        if self.path_depth == len(self.graph):
+            self.finished = True
+        elif self.path_depth > self.max_path_depth:
+            self.max_path_depth = self.path_depth
+        else:
+            self.path.pop()
+        self.path_depth -= 1
+
     
 
 
@@ -101,9 +163,28 @@ def tower_of_cubes(cubes):
                     if cubes[i].faces[k] == cubes[j].faces[l]:
                         g.add_edge((i, opposite_face(k)), (j, l))
     
-    g.print_graph()
+    # g.print_graph()
 
     # DFS
+    g.initialize_search()
+    vertices = tuple(g.graph.keys())
+    for v in vertices:
+        # print(v)
+        if not g.discovered[v]:
+            g.dfs(v)
+
+    # print(g.order)
+    order = g.order
+
+    g.initialize_search()
+    for v in order:
+        g.dfs(v, g.lp_early, None, g.lp_late)
+        if g.max_path_depth == len(cubes):
+            break
+    print(g.max_path_depth)
+    print(g.path)
+
+    
 
             
         
@@ -143,10 +224,23 @@ e = [
     Cube(10,9,8,7,6,5),
     Cube(6,1,2,3,4,7),
     Cube(1,2,3,3,2,1),
+    Cube(3,2,1,1,2,3)
 ]
 
 
-# tower_of_cubes(c)
 tower_of_cubes(d)
 print()
 tower_of_cubes(e)
+
+
+# a = Graph(True)
+# a.add_edge(1, 2)
+# a.add_edge(1, 3)
+# a.add_edge(2, 3)
+# a.add_edge(3, 4)
+# a.add_edge(4, 5)
+# a.initialize_search()
+# vertices = tuple(a.graph.keys())
+# for v in vertices:
+#     if not a.discovered[v]:
+#         a.dfs(v)
