@@ -49,15 +49,15 @@ class Graph:
             for item in items:
                 y = item[0]
                 w = item[1]
-                if w < distance[y] and not intree[y]:
+                if not intree[y] and w < distance[y]:
                     distance[y] = w
                     parent[y] = v
             
             # Select nearest vertex
             v = 1
-            dist = None
+            dist = self.maxint
             for i in self.graph:
-                if not intree[i] and (not dist or distance[i] < dist):
+                if not intree[i] and distance[i] < dist:
                     dist = distance[i]
                     v = i
 
