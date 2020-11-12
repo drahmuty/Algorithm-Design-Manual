@@ -1,4 +1,3 @@
-
 from collections import defaultdict, deque
     
 # Adjacency list graph representation
@@ -46,23 +45,15 @@ class Graph:
             intree[v] = True
             items = self.graph[v]
 
-            print()
-            print('v', v)
-            print('intree', intree.items())
-            print('distance', distance.items())
-
             # Update distance to neighbor vertices
             for item in items:
                 y = item[0]
                 w = item[1]
-                print('y', y)
-                print('w', w)
-                print('distance[y]', distance[y])
                 if w < distance[y] and not intree[y]:
                     distance[y] = w
                     parent[y] = v
             
-            # Select nearest vertext
+            # Select nearest vertex
             v = 1
             dist = None
             for i in self.graph:
