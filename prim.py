@@ -43,12 +43,12 @@ class Graph:
         # Main loop
         while(not intree[v]):
             intree[v] = True
-            items = self.graph[v]
+            neighbors = self.graph[v]
 
             # Update distance to neighbor vertices
-            for item in items:
-                y = item[0]
-                w = item[1]
+            for neighbor in neighbors:
+                y = neighbor[0]
+                w = neighbor[1]
                 if not intree[y] and w < distance[y]:
                     distance[y] = w
                     parent[y] = v
