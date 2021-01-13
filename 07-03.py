@@ -44,6 +44,7 @@ def backtrack(a, k, data):
     else:
         k += 1
         candidates = construct_candidates(a, k, data)
+        print(candidates)
         for c in candidates:
             a.add_edge(k, c)
             backtrack(a, k, data)
@@ -53,10 +54,10 @@ def backtrack(a, k, data):
 # Construct candidates helper function.
 def construct_candidates(a, k, data):
     in_solution = defaultdict(bool)
-    for i in a.keys():
+    for i in a.graph.keys():
         in_solution[i] = True
     c = []
-    for i in data.keys():
+    for i in data.graph.keys():
         if not in_solution[i]:
             c.append(i)
             in_solution[i]
@@ -70,11 +71,39 @@ def is_a_solution(a, k, data):
 
 # Process solution helper function.
 def process_solution(a, k, data):
-    print(a.graph)
+    return True
+
+
+# Get a list of degrees for each vertex in a graph.
+def get_degrees(g):
+    degrees = []
+    for v in g.graph.keys():
+        degrees.append(g.degree[v])
+    degrees.sort()
+    return degrees
 
 
 # Main program.
 def isomorphic_test(a, b):
+
+    # Test for equal number of vertices.
+    if len(a.graph) != len(b.graph):
+        print("length")
+        return False
+
+    # Test for equal number of edges.
+    if a.edges != b.edges:
+        print("edges")
+        return False
+
+    # Test for equal number of degrees by vertex.
+    a_degrees = get_degrees(a)
+    b_degrees = get_degrees(b)
+    for i in range(len(a_degrees)):
+        if a_degrees[i] != b_degrees[i]:
+            print("degrees")
+            return False
+
     global g1
     global g2
     g1, g2, = a, b
@@ -92,9 +121,9 @@ a.add_edge(3,4)
 a.add_edge(4,1)
 
 b = Graph()
-a.add_edge(1,2)
-a.add_edge(2,3)
-a.add_edge(3,4)
-a.add_edge(4,1)
+b.add_edge(1,2)
+b.add_edge(2,3)
+b.add_edge(3,4)
+b.add_edge(4,1)
 
 isomorphic_test(a, b)
