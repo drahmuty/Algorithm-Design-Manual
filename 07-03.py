@@ -13,6 +13,8 @@ class Graph:
     def __init__(self, directed=False):
         self.graph = defaultdict(list)
         self.degree = defaultdict(int)
+        self.label = defaultdict(int)
+        self.next_label = 1
         self.directed = directed
         self.edges = 0
     
@@ -34,43 +36,57 @@ class Graph:
             self.remove_edge(y, x, False)
 
 
-# --------------------------------------------------------------------------------
-
-
 # Backtracking algorithm.
 def backtrack(a, k, data):
     if is_a_solution(a, k, data):
         process_solution(a, k, data)
     else:
         k += 1
+        # print("k:", k)
         candidates = construct_candidates(a, k, data)
-        print(candidates)
+        # print("c:", candidates)
         for c in candidates:
-            a.add_edge(k, c)
+            a[k] = c
+            # print("a:", a)
             backtrack(a, k, data)
-            a.remove_edge(k, c)
+            a[k] = None
 
 
 # Construct candidates helper function.
 def construct_candidates(a, k, data):
     in_solution = defaultdict(bool)
-    for i in a.graph.keys():
+    for i in a:
         in_solution[i] = True
+
     c = []
-    for i in data.graph.keys():
-        if not in_solution[i]:
-            c.append(i)
-            in_solution[i]
+
+    # Get last vertex added to graph.
+    if k == 1:
+        # print("first")
+        return data[1:]
+    else:
+        v = a[k-1]
+
+    # print("v:", v)
+
+    # Get expected degree.
+    d = g1.degree[g1_vertices[k-1]]
+
+    # Consider potential neighbors of v.
+    for u in g2.graph[v]:
+        if not in_solution[u]:
+            c.append(u)
     return c
 
 
 # Is a solution helper function.
 def is_a_solution(a, k, data):
-    return len(a.graph) == len(g1.graph)
+    return k == len(g1.graph)
 
 
 # Process solution helper function.
 def process_solution(a, k, data):
+    print("SOLUTION:", a[1:])
     return True
 
 
@@ -85,6 +101,9 @@ def get_degrees(g):
 
 # Main program.
 def isomorphic_test(a, b):
+
+    print(a.graph)
+    print(b.graph)
 
     # Test for equal number of vertices.
     if len(a.graph) != len(b.graph):
@@ -107,7 +126,19 @@ def isomorphic_test(a, b):
     global g1
     global g2
     g1, g2, = a, b
-    backtrack(Graph(), 0, g2)
+
+    global g1_vertices
+    g1_vertices = [None]
+    for v in g1.graph:
+        g1_vertices.append(v)
+
+    g2_vertices = [None]
+    for v in g2.graph:
+        g2_vertices.append(v)
+
+    a = [None for i in range(len(g1.graph)+1)]
+        
+    backtrack(a, 0, g2_vertices)
 
 
 # --------------------------------------------------------------------------------
@@ -118,12 +149,12 @@ a = Graph()
 a.add_edge(1,2)
 a.add_edge(2,3)
 a.add_edge(3,4)
-a.add_edge(4,1)
+a.add_edge(3,1)
 
 b = Graph()
-b.add_edge(1,2)
-b.add_edge(2,3)
+b.add_edge(3,1)
 b.add_edge(3,4)
-b.add_edge(4,1)
+b.add_edge(2,3)
+b.add_edge(1,2)
 
 isomorphic_test(a, b)
