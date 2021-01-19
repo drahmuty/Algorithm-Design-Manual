@@ -1,3 +1,10 @@
+"""
+Find all anagrams of a word.
+
+Sample word list for 'words.txt': https://www.mit.edu/~ecprice/wordlist.10000
+"""
+
+
 from collections import defaultdict
 
 
