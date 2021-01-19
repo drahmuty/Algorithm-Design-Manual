@@ -25,7 +25,7 @@ def is_a_solution(a, k, data):
     if k == len(a)-1:
         for letter in a:
             solution += letter
-        if WORDS.search(solution):
+        if WORDS.multi_search(solution):
             return True
     return False
 
@@ -123,6 +123,28 @@ class Trie:
         elif last_eow:
             return self.partial_search(word[last_eow:])
         # String is not in trie or does not form a partial word.
+        else:
+            return False
+    
+    # Check to make sure string contains fully-formed words only.
+    def multi_search(self, string):
+        c = self.root
+        k = len(string)
+        last_eow = None
+        out_of_word = False
+        for i in range(k):
+            s = string[i]
+            index = self.char_to_index(s)
+            if not c.children[index]:
+                out_of_word = True
+                break
+            if c.children[index].is_end_of_word:
+                last_eow = i+1
+            c = c.children[index]
+        if not out_of_word and c.is_end_of_word:
+            return True
+        elif out_of_word and last_eow:
+            return self.multi_search(string[last_eow:])
         else:
             return False
     
