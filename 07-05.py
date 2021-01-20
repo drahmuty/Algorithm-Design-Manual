@@ -1,7 +1,12 @@
 """Subgraph isomorphism."""
 
 
+# Import the isomorphic test solution from file "07-03.py"
+# In this file I refer to it as "iso" (see import below).
+
+import iso
 from collections import defaultdict
+
 
 # Backtrack function to generate all subsets of a graph
 # by removing an arbitary number of edges.
@@ -19,14 +24,17 @@ def backtrack(a, k, data):
             a[k] = None
             data.add_edge(x, y)
 
+            
 # Check if graph has the correct number of edges removed.
 def is_a_solution(a, k, data):
     return k == len(a)-1
+
 
 # Run isomorphic test for current graph.
 def process_solution(a, k, data):
     iso.isomorphic_test(G, data)
 
+    
 # Generate possible remaining edges to remove. 
 # To eliminate duplicate permutations, only allow edges in
 # ascending order. This is what the series of conditional
@@ -58,9 +66,7 @@ def construct_candidates(a, k, data):
     return c
 
 
-
-# Main program.
-# 
+# Main program - Test for subgraph isomorphism.
 def sub_isomporhic_test(a, b):
     
     # Make sure b has at least as many vertices as a.
@@ -95,10 +101,7 @@ def sub_isomporhic_test(a, b):
     backtrack(sol_arr, 0, b)
     print("Done")
 
-
-
-
-
+# --------------------------------------------------------------------------------
 
 # Test cases
 a = iso.Graph()
@@ -106,7 +109,6 @@ a.add_edge(1,2)
 a.add_edge(2,3)
 a.add_edge(3,1)
 a.add_edge(3,4)
-
 
 b = iso.Graph()
 b.add_edge(4,3)
