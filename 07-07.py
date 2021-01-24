@@ -8,7 +8,7 @@ from collections import defaultdict
 class Solution:
     def __init__(self, n):
         self.solution = [None for i in range(n+1)]
-        self.bandwidth = n-1
+        self.bandwidth = n
         self.solved = False
         self.final_solution = None
 
@@ -52,20 +52,6 @@ class Graph:
         self.min_band = min
         return min
 
-# Find the max bandwidth in a linear ordering of vertices.
-def max_band(sol, graph):
-    max = 0
-    k = len(sol)
-    for i in range(k-1, -1, -1):
-        x = sol[i]
-        for j in range(i-1, -1, -1):
-            y = sol[j]
-            if graph.graph[x-1][y-1]:
-                b = i - j
-                if b > max:
-                    max = b
-    return max
-
 def backtrack(a, k, data):
     if a.solved:
         return
@@ -105,7 +91,6 @@ def process_solution(a, k, data):
         a.bandwidth = max
 
 def construct_candidates(a, k, data):
-    partial_sol = a.solution[1:k]
     candidates = []
     in_sol = defaultdict(bool)
     for i in range(1, k):
@@ -115,14 +100,20 @@ def construct_candidates(a, k, data):
         if k == 1:
             candidates.append(c)
         elif not in_sol[c]:
-            if partial_sol:
-                p = partial_sol + [c]
-                b = max_band(p, data)
-                if b > a.bandwidth:
-                    # print('skipping', c, '('+str(b)+' > '+str(a.bandwidth)+')')
-                    continue
+            if not is_viable_candidate(a, k, c, data):
+                break
+            else:
                 candidates.append(c)
     return candidates
+
+# Determine if adding a candidate will cause the bandwidth to
+# exceed the current best solution.
+def is_viable_candidate(a, k, c, data):
+    for i in range(k-1, 0, -1):
+        y = a.solution[i]
+        if data.graph[c-1][y-1] and k - i > a.bandwidth:
+            return False
+    return True
 
 # MAIN PROGRAM - Find the minimum bandwidth of a graph.
 def min_bandwidth(graph):
@@ -146,25 +137,33 @@ def min_bandwidth(graph):
 
 
 # Test cases.
-a = Graph(4)
-a.add_edge(1,2)
-a.add_edge(1,3)
-a.add_edge(1,4)
-min_bandwidth(a)
+# a = Graph(4)
+# a.add_edge(1,2)
+# a.add_edge(1,3)
+# a.add_edge(1,4)
+# min_bandwidth(a)
 
-b = Graph(5)
-b.add_edge(1,2)
-b.add_edge(1,3)
-b.add_edge(1,4)
-b.add_edge(1,5)
-min_bandwidth(b)
+# b = Graph(5)
+# b.add_edge(1,2)
+# b.add_edge(1,3)
+# b.add_edge(1,4)
+# b.add_edge(1,5)
+# min_bandwidth(b)
 
-c = Graph(8)
-c.add_edge(1,8)
-c.add_edge(8,2)
-c.add_edge(2,7)
-c.add_edge(7,3)
-c.add_edge(3,6)
-c.add_edge(6,4)
-c.add_edge(4,5)
-min_bandwidth(c)
+# c = Graph(8)
+# c.add_edge(1,8)
+# c.add_edge(8,2)
+# c.add_edge(2,7)
+# c.add_edge(7,3)
+# c.add_edge(3,6)
+# c.add_edge(6,4)
+# c.add_edge(4,5)
+# min_bandwidth(c)
+
+d = Graph(6)
+d.add_edge(1,6)
+d.add_edge(6,2)
+d.add_edge(2,5)
+d.add_edge(5,3)
+d.add_edge(3,4)
+min_bandwidth(d)
