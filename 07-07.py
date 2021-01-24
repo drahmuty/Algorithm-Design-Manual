@@ -115,11 +115,24 @@ def is_viable_candidate(a, k, c, data):
             return False
     return True
 
+# Build graph from text file.
+def build(filename):
+    with open(filename) as file_obj:
+        data = file_obj.readlines()
+    n_edges = int(data[0])
+    n_vertices = int(data[1])
+    g = Graph(n_vertices)
+    for i in range(2, len(data)):
+        x = int(data[i].split(' ')[0])
+        y = int(data[i].split(' ')[1])
+        g.add_edge(x, y)
+    return g
+
 # MAIN PROGRAM - Find the minimum bandwidth of a graph.
 def min_bandwidth(graph):
 
-    print('GRAPH:')
-    graph.print()
+    # print('GRAPH:')
+    # graph.print()
 
     global MIN, MAX
     MIN = graph.get_min_band()
@@ -133,6 +146,11 @@ def min_bandwidth(graph):
     print('MAX BANDWIDTH:', solution.bandwidth)
     print()
     return solution.final_solution, solution.bandwidth
+
+# ALT MAIN PROGRAM - Convert file to graph. Run min_bandwidth().
+def min_bandwidth_file(file):
+    graph = build(file)
+    min_bandwidth(graph)
 
 
 
@@ -160,10 +178,12 @@ def min_bandwidth(graph):
 # c.add_edge(4,5)
 # min_bandwidth(c)
 
-d = Graph(6)
-d.add_edge(1,6)
-d.add_edge(6,2)
-d.add_edge(2,5)
-d.add_edge(5,3)
-d.add_edge(3,4)
-min_bandwidth(d)
+# d = Graph(6)
+# d.add_edge(1,6)
+# d.add_edge(6,2)
+# d.add_edge(2,5)
+# d.add_edge(5,3)
+# d.add_edge(3,4)
+# min_bandwidth(d)
+
+min_bandwidth_file('file1.txt')
