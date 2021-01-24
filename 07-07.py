@@ -1,20 +1,22 @@
 """Bandwidth minimization."""
 
-
 import math
+import time
 from collections import defaultdict
+
 
 # Solution class.
 class Solution:
     def __init__(self, n):
-        self.solution = [None for i in range(n+1)]
+        self.solution = [None for i in range(n + 1)]
         self.bandwidth = n
         self.solved = False
         self.final_solution = None
 
+
 # Matrix representation of a graph.
 class Graph:
-    
+
     def __init__(self, n):
         self.n_vertices = n
         self.n_edges = 0
@@ -25,10 +27,10 @@ class Graph:
     def print(self):
         for i in self.graph:
             print(i)
-    
+
     def add_edge(self, x, y):
-        self.graph[x-1][y-1] = 1
-        self.graph[y-1][x-1] = 1
+        self.graph[x - 1][y - 1] = 1
+        self.graph[y - 1][x - 1] = 1
 
     def remove_edge(self, x, y):
         pass
@@ -52,6 +54,7 @@ class Graph:
         self.min_band = min
         return min
 
+
 def backtrack(a, k, data):
     if a.solved:
         return
@@ -65,18 +68,20 @@ def backtrack(a, k, data):
             backtrack(a, k, data)
             a.solution[k] = None
 
+
 def is_a_solution(a, k, data):
-    return k == len(a.solution)-1
+    return k == len(a.solution) - 1
+
 
 def process_solution(a, k, data):
     solution = a.solution[1:]
     max = None
     k = len(solution)
-    for i in range(k-1):
+    for i in range(k - 1):
         x = solution[i]
-        for j in range(i+1, k):
+        for j in range(i + 1, k):
             y = solution[j]
-            if data.graph[x-1][y-1]:
+            if data.graph[x - 1][y - 1]:
                 d = j - i
                 if not max or d > max:
                     max = d
@@ -96,24 +101,26 @@ def construct_candidates(a, k, data):
     for i in range(1, k):
         in_sol[a.solution[i]] = True
     for i in range(len(data.graph)):
-        c = i+1
+        c = i + 1
         if k == 1:
             candidates.append(c)
         elif not in_sol[c]:
             if not is_viable_candidate(a, k, c, data):
-                break
+                return []
             else:
                 candidates.append(c)
     return candidates
 
+
 # Determine if adding a candidate will cause the bandwidth to
 # exceed the current best solution.
 def is_viable_candidate(a, k, c, data):
-    for i in range(k-1, 0, -1):
+    for i in range(k - 1, 0, -1):
         y = a.solution[i]
-        if data.graph[c-1][y-1] and k - i > a.bandwidth:
+        if data.graph[c - 1][y - 1] and k - i >= a.bandwidth:
             return False
     return True
+
 
 # Build graph from text file.
 def build(filename):
@@ -128,9 +135,9 @@ def build(filename):
         g.add_edge(x, y)
     return g
 
+
 # MAIN PROGRAM - Find the minimum bandwidth of a graph.
 def min_bandwidth(graph):
-
     # print('GRAPH:')
     # graph.print()
 
@@ -147,10 +154,14 @@ def min_bandwidth(graph):
     print()
     return solution.final_solution, solution.bandwidth
 
+
 # ALT MAIN PROGRAM - Convert file to graph. Run min_bandwidth().
 def min_bandwidth_file(file):
+    start_time = time.time()
     graph = build(file)
     min_bandwidth(graph)
+    print('Running time:', time.time() - start_time)
+
 
 
 
