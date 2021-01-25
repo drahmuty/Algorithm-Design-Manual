@@ -1,6 +1,10 @@
+"""Minimum bandwidth, version 2."""
+
+
 import time
 import math
 from collections import defaultdict
+
 
 class Graph:
 
@@ -32,6 +36,7 @@ class Graph:
                 break
         return min
 
+    
 class Solution:
 
     def __init__(self, graph):
@@ -42,7 +47,7 @@ class Solution:
         self.current_solution = [None for i in range(self.n + 1)]
         self.current_bandwidth = defaultdict(int)
         self.current_position = defaultdict(int)
-        self.skip = [defaultdict(bool) for i in range(self.n + 1)]
+        self.skip = defaultdict(bool)
         self.best_solution = None
         self.best_bandwidth = self.n
         self.done = False
@@ -69,6 +74,7 @@ class Solution:
     def del_bandwidth(self, k):
         self.current_bandwidth[k] = 0
 
+        
 def backtrack(a, k, data):
     # print(k, '\t', a.current_solution)
     if is_a_solution(a, k, data):
@@ -84,11 +90,14 @@ def backtrack(a, k, data):
             a.current_solution[k] = None
             a.current_position[c] = None
             a.del_bandwidth(k)
+            a.skip[k] = defaultdict(bool)
             if a.done:
                 return
 
+            
 def is_a_solution(a, k, data):
     return k == a.n
+
 
 def process_solution(a, k, data):
     if not a.best_solution or a.current_bandwidth[k] < a.best_bandwidth:
@@ -98,18 +107,22 @@ def process_solution(a, k, data):
     if a.best_bandwidth == a.lower_bound or a.lower_bound == a.upper_bound:
         a.done = True
 
+        
 def construct_candidates(a, k, data):
     candidates = []
     for x in data:
         if not a.current_position[x]:
             a.current_position[x] = k
-            if a.bandwidth(x) >= a.best_bandwidth:
+            if a.skip[x] or a.bandwidth(x) >= a.best_bandwidth:
+                a.skip[x] = True
                 a.current_position[x] = None
                 return []
             else:
                 candidates.append(x)
+                a.skip[x] = False
                 a.current_position[x] = None
     return candidates
+
 
 def build_graph_from_file(filename):
     with open(filename) as file_obj:
@@ -122,11 +135,13 @@ def build_graph_from_file(filename):
         g.add_edge(x, y)
     return g
 
+
 def min_bandwidth(graph):
     solution = Solution(graph)
     vertices_list = graph.get_vertices_list()
     backtrack(solution, 0, vertices_list)
 
+    
 def min_bandwidth_file_input(file):
     start_time = time.time()
     graph = build_graph_from_file(file)
@@ -136,7 +151,7 @@ def min_bandwidth_file_input(file):
 
 
 # TEST CASES.
-min_bandwidth_file_input('01.txt')
+min_bandwidth_file_input('test.txt')
 
 # a = Graph(5)
 # a.add_edge(1, 2)
