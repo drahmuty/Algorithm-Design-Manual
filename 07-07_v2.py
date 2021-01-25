@@ -101,10 +101,11 @@ def is_a_solution(a, k, data):
 
 def process_solution(a, k, data):
     if not a.best_solution or a.current_bandwidth[k] < a.best_bandwidth:
-        print('NEW BEST SOLUTION:', a.current_solution, a.current_bandwidth[k])
-        a.best_solution = a.current_solution
+        a.best_solution = a.current_solution.copy()
         a.best_bandwidth = a.current_bandwidth[k]
+        # print('NEW BEST SOLUTION:', a.best_solution, a.best_bandwidth)
     if a.best_bandwidth == a.lower_bound or a.lower_bound == a.upper_bound:
+        # print('FOUND LOWER BOUND')
         a.done = True
 
         
@@ -140,8 +141,11 @@ def min_bandwidth(graph):
     solution = Solution(graph)
     vertices_list = graph.get_vertices_list()
     backtrack(solution, 0, vertices_list)
+    print('SOLUTION:\t', solution.best_solution[1:])
+    print('BANDWIDTH:\t', solution.best_bandwidth)
+    return solution.best_solution, solution.best_bandwidth
 
-    
+
 def min_bandwidth_file_input(file):
     start_time = time.time()
     graph = build_graph_from_file(file)
@@ -151,7 +155,7 @@ def min_bandwidth_file_input(file):
 
 
 # TEST CASES.
-min_bandwidth_file_input('test.txt')
+min_bandwidth_file_input('01.txt')
 
 # a = Graph(5)
 # a.add_edge(1, 2)
