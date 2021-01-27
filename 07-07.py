@@ -1,28 +1,17 @@
 """Bandwidth minimization."""
 
-import math
+
 import time
-from collections import defaultdict
+import math
+from collections import defaultdict, deque
 
 
-# Solution class.
-class Solution:
-    def __init__(self, n):
-        self.solution = [None for i in range(n + 1)]
-        self.bandwidth = n
-        self.solved = False
-        self.final_solution = None
-
-
-# Matrix representation of a graph.
 class Graph:
 
     def __init__(self, n):
-        self.n_vertices = n
-        self.n_edges = 0
         self.graph = [[0 for i in range(n)] for i in range(n)]
-        self.min_band = None
-        self.max_band = n - 1
+        self.n = n
+        self.degree = defaultdict(int)
 
     def print(self):
         for i in self.graph:
@@ -31,104 +20,119 @@ class Graph:
     def add_edge(self, x, y):
         self.graph[x - 1][y - 1] = 1
         self.graph[y - 1][x - 1] = 1
+        self.degree[x] += 1
+        self.degree[y] += 1
 
-    def remove_edge(self, x, y):
-        pass
+    def get_vertices_list(self):
+        return [i+1 for i in range(len(self.graph))]
 
-    def cost(self, x, y):
-        pass
-
-    # Get largest min bandwidth for graph vertices.
-    # This value is the lower bound for the bandwidth solution.
-    def get_min_band(self):
+    def get_min_bandwidth(self):
         min = None
         for v in self.graph:
             degree = 0
             for y in v:
                 degree += y
-            bandwidth = math.ceil(degree / 2)
-            if not min or bandwidth > min:
-                min = bandwidth
+            total = math.ceil(degree / 2)
+            if not min or total > min:
+                min = total
             if min == 1:
                 break
-        self.min_band = min
         return min
 
+    
+class Solution:
 
+    def __init__(self, graph):
+        self.g = graph
+        self.n = len(self.g.graph)
+        self.upper_bound = self.n - 1
+        self.lower_bound = self.g.get_min_bandwidth()
+        self.current_solution = [None for i in range(self.n + 1)]
+        self.current_bandwidth = defaultdict(int)
+        self.current_position = defaultdict(int)
+        self.skip = defaultdict(bool)
+        self.best_solution = None
+        self.best_bandwidth = self.n
+        self.done = False
+
+    def bandwidth(self, x):
+        bandwidth = 0
+        for i in range(self.n):
+            y = i + 1
+            if self.g.graph[x - 1][y - 1] and self.current_position[y]:
+                d = self.current_position[x] - self.current_position[y]
+                if not bandwidth or d > bandwidth:
+                    bandwidth = d
+        return bandwidth
+
+    def add_bandwidth(self, k):
+        x = self.current_solution[k]
+        new_bandwidth = self.bandwidth(x)
+        old_bandwidth = self.current_bandwidth[k - 1]
+        if new_bandwidth > old_bandwidth:
+            self.current_bandwidth[k] = new_bandwidth
+        else:
+            self.current_bandwidth[k] = old_bandwidth
+
+    def del_bandwidth(self, k):
+        self.current_bandwidth[k] = 0
+
+        
 def backtrack(a, k, data):
-    if a.solved:
-        return
+    # print(k, '\t', a.current_solution)
     if is_a_solution(a, k, data):
         process_solution(a, k, data)
     else:
         k += 1
         candidates = construct_candidates(a, k, data)
         for c in candidates:
-            a.solution[k] = c
-            backtrack(a, k, data)
-            a.solution[k] = None
+            a.current_solution[k] = c
+            a.current_position[c] = k
+            a.add_bandwidth(k)
+            backtrack(a, k, candidates)
+            a.current_solution[k] = None
+            a.current_position[c] = None
+            a.del_bandwidth(k)
+            a.skip[k] = defaultdict(bool)
+            if a.done:
+                return
 
-
+            
 def is_a_solution(a, k, data):
-    return k == len(a.solution) - 1
+    return k == a.n
 
 
 def process_solution(a, k, data):
-    solution = a.solution[1:]
-    max = None
-    k = len(solution)
-    for i in range(k - 1):
-        x = solution[i]
-        for j in range(i + 1, k):
-            y = solution[j]
-            if data.graph[x - 1][y - 1]:
-                d = j - i
-                if not max or d > max:
-                    max = d
-                if max == MAX:
-                    break
-    if max == MIN or MIN == MAX:
-        a.final_solution = solution
-        a.bandwidth = max
-        a.solved = True
-    elif max < a.bandwidth:
-        a.final_solution = solution
-        a.bandwidth = max
+    if not a.best_solution or a.current_bandwidth[k] < a.best_bandwidth:
+        a.best_solution = a.current_solution.copy()
+        a.best_bandwidth = a.current_bandwidth[k]
+        # print('NEW BEST SOLUTION:', a.best_solution, a.best_bandwidth)
+    if a.best_bandwidth == a.lower_bound or a.lower_bound == a.upper_bound:
+        # print('FOUND LOWER BOUND')
+        a.done = True
 
+        
 def construct_candidates(a, k, data):
     candidates = []
-    in_sol = defaultdict(bool)
-    for i in range(1, k):
-        in_sol[a.solution[i]] = True
-    for i in range(len(data.graph)):
-        c = i + 1
-        if k == 1:
-            candidates.append(c)
-        elif not in_sol[c]:
-            if not is_viable_candidate(a, k, c, data):
+    for x in data:
+        if not a.current_position[x]:
+            a.current_position[x] = k
+            if a.skip[x] or a.bandwidth(x) >= a.best_bandwidth:
+                a.skip[x] = True
+                a.current_position[x] = None
                 return []
             else:
-                candidates.append(c)
+                candidates.append(x)
+                a.skip[x] = False
+                a.current_position[x] = None
     return candidates
 
 
-# Determine if adding a candidate will cause the bandwidth to
-# exceed the current best solution.
-def is_viable_candidate(a, k, c, data):
-    for i in range(k - 1, 0, -1):
-        y = a.solution[i]
-        if data.graph[c - 1][y - 1] and k - i >= a.bandwidth:
-            return False
-    return True
-
-
-# Build graph from text file.
-def build(filename):
+def build_graph_from_file(filename):
     with open(filename) as file_obj:
         data = file_obj.readlines()
-    n_edges = int(data[0])
-    n_vertices = int(data[1])
-    g = Graph(n_vertices)
+    n = int(data[1])
+    g = Graph(n)
     for i in range(2, len(data)):
         x = int(data[i].split(' ')[0])
         y = int(data[i].split(' ')[1])
@@ -136,65 +140,22 @@ def build(filename):
     return g
 
 
-# MAIN PROGRAM - Find the minimum bandwidth of a graph.
 def min_bandwidth(graph):
-    # print('GRAPH:')
-    # graph.print()
-
-    global MIN, MAX
-    MIN = graph.get_min_band()
-    MAX = graph.max_band
-
-    solution = Solution(graph.n_vertices)
-
-    backtrack(solution, 0, graph)
-
-    print('SOLUTION:', solution.final_solution)
-    print('MAX BANDWIDTH:', solution.bandwidth)
-    print()
-    return solution.final_solution, solution.bandwidth
+    solution = Solution(graph)
+    vertices_list = graph.get_vertices_list()
+    backtrack(solution, 0, vertices_list)
+    print('SOLUTION:\t', solution.best_solution[1:])
+    print('BANDWIDTH:\t', solution.best_bandwidth)
+    return solution.best_solution, solution.best_bandwidth
 
 
-# ALT MAIN PROGRAM - Convert file to graph. Run min_bandwidth().
-def min_bandwidth_file(file):
+def min_bandwidth_file_input(file):
     start_time = time.time()
-    graph = build(file)
+    graph = build_graph_from_file(file)
     min_bandwidth(graph)
     print('Running time:', time.time() - start_time)
 
 
 
-
-# Test cases.
-# a = Graph(4)
-# a.add_edge(1,2)
-# a.add_edge(1,3)
-# a.add_edge(1,4)
-# min_bandwidth(a)
-
-# b = Graph(5)
-# b.add_edge(1,2)
-# b.add_edge(1,3)
-# b.add_edge(1,4)
-# b.add_edge(1,5)
-# min_bandwidth(b)
-
-# c = Graph(8)
-# c.add_edge(1,8)
-# c.add_edge(8,2)
-# c.add_edge(2,7)
-# c.add_edge(7,3)
-# c.add_edge(3,6)
-# c.add_edge(6,4)
-# c.add_edge(4,5)
-# min_bandwidth(c)
-
-# d = Graph(6)
-# d.add_edge(1,6)
-# d.add_edge(6,2)
-# d.add_edge(2,5)
-# d.add_edge(5,3)
-# d.add_edge(3,4)
-# min_bandwidth(d)
-
-min_bandwidth_file('file1.txt')
+# TEST CASES.
+min_bandwidth_file_input('test.txt')
