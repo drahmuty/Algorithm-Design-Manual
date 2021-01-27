@@ -1,15 +1,15 @@
-"""Minimum bandwidth, version 2."""
-
+"""Minimum bandwidth."""
 
 import time
 import math
-from collections import defaultdict
-
+from collections import defaultdict, deque
 
 class Graph:
 
     def __init__(self, n):
         self.graph = [[0 for i in range(n)] for i in range(n)]
+        self.n = n
+        self.degree = defaultdict(int)
 
     def print(self):
         for i in self.graph:
@@ -18,9 +18,21 @@ class Graph:
     def add_edge(self, x, y):
         self.graph[x - 1][y - 1] = 1
         self.graph[y - 1][x - 1] = 1
+        self.degree[x] += 1
+        self.degree[y] += 1
 
     def get_vertices_list(self):
         return [i+1 for i in range(len(self.graph))]
+
+    def get_vertices_sorted_by_degree(self, rev=False):
+        for i in range(self.n):
+            if not self.degree[i+1]:
+                self.degree[i+1] = 0
+        sorted_tuples = sorted(self.degree.items(), key=lambda item: item[1], reverse=rev)
+        vertices = []
+        for t in sorted_tuples:
+            vertices.append(t[0])
+        return vertices
 
     # Get largest minimum bandwidth.
     def get_min_bandwidth(self):
@@ -36,7 +48,6 @@ class Graph:
                 break
         return min
 
-    
 class Solution:
 
     def __init__(self, graph):
@@ -49,7 +60,7 @@ class Solution:
         self.current_position = defaultdict(int)
         self.skip = defaultdict(bool)
         self.best_solution = None
-        self.best_bandwidth = self.n
+        self.best_bandwidth = self.n  # Dividing by 2 (or another number) seems to work really well.
         self.done = False
 
     def bandwidth(self, x):
@@ -74,7 +85,6 @@ class Solution:
     def del_bandwidth(self, k):
         self.current_bandwidth[k] = 0
 
-        
 def backtrack(a, k, data):
     # print(k, '\t', a.current_solution)
     if is_a_solution(a, k, data):
@@ -86,7 +96,7 @@ def backtrack(a, k, data):
             a.current_solution[k] = c
             a.current_position[c] = k
             a.add_bandwidth(k)
-            backtrack(a, k, data)
+            backtrack(a, k, candidates)
             a.current_solution[k] = None
             a.current_position[c] = None
             a.del_bandwidth(k)
@@ -94,10 +104,8 @@ def backtrack(a, k, data):
             if a.done:
                 return
 
-            
 def is_a_solution(a, k, data):
     return k == a.n
-
 
 def process_solution(a, k, data):
     if not a.best_solution or a.current_bandwidth[k] < a.best_bandwidth:
@@ -108,7 +116,6 @@ def process_solution(a, k, data):
         # print('FOUND LOWER BOUND')
         a.done = True
 
-        
 def construct_candidates(a, k, data):
     candidates = []
     for x in data:
@@ -124,7 +131,6 @@ def construct_candidates(a, k, data):
                 a.current_position[x] = None
     return candidates
 
-
 def build_graph_from_file(filename):
     with open(filename) as file_obj:
         data = file_obj.readlines()
@@ -136,15 +142,26 @@ def build_graph_from_file(filename):
         g.add_edge(x, y)
     return g
 
-
 def min_bandwidth(graph):
     solution = Solution(graph)
-    vertices_list = graph.get_vertices_list()
+
+    # Sort vertices by degree, placing largest degrees in middle
+    # and smallest degrees on either end.
+    vertices = graph.get_vertices_sorted_by_degree(True)
+    vertices_list = deque([])
+    flip = False
+    for v in vertices:
+        if flip:
+            vertices_list.append(v)
+            flip = False
+        else:
+            vertices_list.appendleft(v)
+            flip = True
+
     backtrack(solution, 0, vertices_list)
     print('SOLUTION:\t', solution.best_solution[1:])
     print('BANDWIDTH:\t', solution.best_bandwidth)
     return solution.best_solution, solution.best_bandwidth
-
 
 def min_bandwidth_file_input(file):
     start_time = time.time()
@@ -155,7 +172,7 @@ def min_bandwidth_file_input(file):
 
 
 # TEST CASES.
-min_bandwidth_file_input('01.txt')
+min_bandwidth_file_input('02.txt')
 
 # a = Graph(5)
 # a.add_edge(1, 2)
