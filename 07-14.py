@@ -30,11 +30,11 @@ def process_solution(a, k, string):
 
 def get_candidates(a, k, string, char_freq):
     candidates = []
-    in_sol = defaultdict(int)
+    char_count = defaultdict(int)
     for char in a:
-        in_sol[char] += 1
+        char_count[char] += 1
     for s in string:
-        if in_sol[s] < char_freq[s]:
+        if char_count[s] < char_freq[s]:
             candidates.append(s)
     return sorted(set(candidates))
 
