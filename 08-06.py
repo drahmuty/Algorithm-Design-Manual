@@ -1,3 +1,5 @@
+"""Find mininum number of coins needed to make change for amount n with a given set of coin denominations."""
+
 def min_coins(n, denoms):
     k = len(denoms)
     C = [float('inf') for i in range(n+1)]
