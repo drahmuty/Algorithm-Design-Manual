@@ -12,10 +12,8 @@ def knapsack(S, T):
     for i in range(1, n):
         for j in range(1, k):
             M[i][j] = M[i-1][j]
-            if S[i] <= j:
-                parent_value = M[i-1][j-S[i]]
-                if parent_value + S[i] > parent_value:
-                    M[i][j] = parent_value + S[i]
+            if S[i] <= j and M[i-1][j-S[i]] + S[i] > M[i][j]:
+                M[i][j] = M[i-1][j-S[i]] + S[i]
 
     subset = []
     
@@ -36,6 +34,6 @@ def knapsack(S, T):
     
         
       
-s = [1,2,5,9,10]      
-knapsack(s, 22)
-knapsack(s, 23)
+s = [1,2,3,4,5]      
+knapsack(s, 6)
+knapsack(s, 12)
