@@ -1,4 +1,4 @@
-"""Knapsack problem. Given a set S and total sum T, give a subset that adds up to T exactly."""
+"""Knapsack problem. Given a set S and total sum T, find a subset that adds up to exactly T."""
 
 
 
