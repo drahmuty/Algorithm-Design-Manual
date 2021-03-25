@@ -1,6 +1,4 @@
-"""Find the order to a cut string at given positions at minimum cost. Each cut of string size n costs n."""
-
-# Input: Array of positions in string,
+# Input: Sorted array of positions in string,
 # including start (0) and end (total length)
 
 # m = total string length (last position in array)
@@ -10,6 +8,12 @@
 # Create n x n matrix
 
 def cut_string(P):
+
+    print('Points:', P)
+
+    global C
+    global order_list
+
     P.sort()
     first = P[0]
     last = P[-1]
@@ -17,7 +21,7 @@ def cut_string(P):
     n = len(P)
     
     M = [[float('inf') for i in range(n)] for i in range(n)]
-    Z = [[0 for i in range(n)] for i in range(n)]
+    C = [[0 for i in range(n)] for i in range(n)]
 
     i = 0
     j = 0
@@ -30,33 +34,30 @@ def cut_string(P):
                 c = M[i][k] + M[k][j] + (P[j] - P[i])
                 if c < M[i][j]:
                     M[i][j] = c
-                    Z[i][j] = P[k]
+                    C[i][j] = k
         i += 1
         j += 1
         if j == n:
             i = 0
             start += 1
             j = start
-        
-    for row in M:
-        print(row)
-    print()
-    for row in Z:
-        print(row)
 
-        
-    # Still figuring out how to calculate order.
-    # cut_order = []
-    # i = 0
-    # j = n-1
-    # while i < n and j > 0 and M[i][j] > 0:
-    #     cut_order.append(Z[i][j])
-    #     if M[i][j-1] < M[i+1][j]:
-    #         j -= 1
-    #     else:
-    #         i += 1
+    order_list = []
+    order = get_order(0, n-1, P)
+    
+    print('Order:', order_list)
+    print('Cost:', M[0][n-1])
 
-    return M[0][n-1]
+    return order_list
+
+def get_order(i, j, P):
+    if C[i][j] == 0:
+        return
+    else:
+        order_list.append(P[C[i][j]])
+        get_order(i, C[i][j], P)
+        get_order(C[i][j], j, P)
+
     
 
-print(cut_string([0,1,3,8,10,20]))
+cut_string([0, 3, 8, 10, 20])
