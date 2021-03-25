@@ -1,11 +1,9 @@
-# Input: Sorted array of positions in string,
-# including start (0) and end (total length)
+"""
+Given a set of points P on a string, determine the order in which to cut the string into segments. 
+Each cut costs n (n = length of current string).
+"""
 
-# m = total string length (last position in array)
-# n = number of cut points (array len minus 2)
 
-# Make sure array is sorted in increasing order
-# Create n x n matrix
 
 def cut_string(P):
 
