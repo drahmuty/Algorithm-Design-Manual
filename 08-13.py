@@ -18,6 +18,7 @@ def encode_string(S, T):
     
     # Array to store cost of solution.
     C = [float('inf') for i in range(n)]
+    C[0] = 0
 
     # Array to store length of each item in T.
     L = [len(T[i]) for i in range(m)]
@@ -40,9 +41,7 @@ def encode_string(S, T):
     for j in range(n):
         for k in range(m):
             i = L[k] - 1
-            if j == 0:
-                C[j] = 0
-            elif M[k][i][j] > 0 and C[j-M[k][i][j]] + 1 < C[j]:
+            if M[k][i][j] > 0 and C[j-M[k][i][j]] + 1 < C[j]:
                 A[j] = k
                 C[j] = C[j-M[k][i][j]] + 1
     
