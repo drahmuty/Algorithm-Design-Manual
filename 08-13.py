@@ -62,4 +62,4 @@ def encode_string(S, T):
 # Test case.
 string = 'bababbaababa'
 text_items = ['a', 'ba', 'abab', 'b']
-encode_string('string', text_items)
+encode_string(string, text_items)
