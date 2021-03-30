@@ -19,8 +19,7 @@ def num_safe_paths(x, y, bad):
             else:
                 M[i][j] = M[i][j-1] + M[i-1][j]
     
-    for row in M:
-        print(row)
+    return M[i][j]
 
 
 x = 5
@@ -30,4 +29,4 @@ bad = [
     (3,3),
     (5,4)
 ]
-num_safe_paths(x, y, bad)
+print(num_safe_paths(x, y, bad))
