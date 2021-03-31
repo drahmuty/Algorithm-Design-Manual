@@ -17,7 +17,7 @@ def store_books_on_shelves(B, L):
     print(B)
     print(C)
     print(S)
-    return S[i]
+    return S[i] + 1
 
 
 
