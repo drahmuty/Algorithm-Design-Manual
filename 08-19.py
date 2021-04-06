@@ -37,3 +37,7 @@ def bookshelves(books, width):
 books = [[1,2], [1,1], [1,1], [1,2], [1,2]]
 width = 2
 bookshelves(books, width)
+
+
+
+# Found solution: https://h1ros.github.io/posts/coding/1105-filling-bookcase-shelves-dynamic-programming/
