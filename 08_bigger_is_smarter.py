@@ -72,6 +72,8 @@ sort_elephants(elephants)
 
 
 
+"""Above solution inspired by: https://github.com/secnot/uva-onlinejudge-solutions/blob/master/10131%20-%20Is%20Bigger%20Smarter%3F/main.py"""
+
 
 
 # ATTEMPT 1: USING GRAPH DFS AND MEMOIZATION.
