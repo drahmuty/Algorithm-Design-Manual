@@ -1,3 +1,81 @@
+# ATTEMP 2: USING DYNAMIC PROGRAMMING.
+
+def sort_key(x):
+    weight, iq, num = x
+    return weight * 10000 - iq
+
+
+def sort_elephants(elephants):
+
+    n = len(elephants) + 1
+
+    # Add number to each elephant.
+    for i in range(n - 1):
+        elephants[i].append(i + 1)
+
+    # Sort the elephants by decreasing weight and increasing iq.
+    elephants_sorted = sorted(elephants, reverse=True, key=sort_key)
+
+    # Add empty value to beginning of elephants list
+    # for easier indexing. 
+    elephants_sorted = [None] + elephants_sorted
+
+    # Solution arrays.
+    A = [1] * n
+    A[0] = 0
+    P = [None] * n
+
+    # Find max length for each possible ordering.
+    max_length = 0
+    max_index = 0
+    for i in range(1, n):
+        current_weight, current_iq, current_num = elephants_sorted[i]
+        current_cost = A[i]
+
+        for j in range(i + 1, n):
+            next_weight, next_iq, next_num = elephants_sorted[j]
+            next_cost = A[j]
+
+            if next_weight >= current_weight or next_iq <= current_iq:
+                continue
+
+            if current_cost >= next_cost:
+                A[j] = current_cost + 1
+                P[j] = i
+
+                if current_cost + 1 > max_length:
+                    max_length = current_cost + 1
+                    max_index = j
+    
+    print('Max:', max_length)
+    
+    # Get solution ordering.
+    while max_index:
+        weight, iq, num = elephants_sorted[max_index]
+        print(num, weight, iq)
+        max_index = P[max_index]
+
+
+elephants = [
+    [6008, 1300],
+    [6000, 2100],
+    [500, 2000],
+    [1000, 4000],
+    [1100, 3000],
+    [6000, 2000],
+    [8000, 1400],
+    [6000, 1200],
+    [2000, 1900]
+]
+
+sort_elephants(elephants)
+
+
+
+
+
+# ATTEMPT 1: USING GRAPH DFS AND MEMOIZATION.
+
 def elephant_order(E):
 
     # Add extra value to E for easier indexing into array.
@@ -42,7 +120,6 @@ def elephant_order(E):
     print('Order:', elephant_order)
 
 
-
 def dfs_max_depth(v, G, D, P, n):
     if D[v] == 0:
         D[v] = 1
@@ -58,8 +135,6 @@ def dfs_max_depth(v, G, D, P, n):
         else:
             D, P = dfs_max_depth(w, G, D, P, n)
     return D, P
-
-
 
 
 elephants = [
