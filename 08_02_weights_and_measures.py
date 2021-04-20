@@ -29,6 +29,7 @@ def turtles(T):
             carrying_capacity = T[j][1] - weight
             # Skip turtles that can't carry the total weight.
             if carrying_capacity < 0:
+                weight -= T[j][0]
                 continue
             # Choose option with larger stack height.
             C[i] = max(C[i], C[j] + 1)            
