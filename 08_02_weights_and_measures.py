@@ -33,9 +33,7 @@ def turtles(T):
             c2 = T[j][1] - w2
             add_cap = min(c1, C[j] - w1)
             new_cap = min(c1, c2 - w1)
-            if add_cap < 0 and new_cap < 0:
-                continue
-            if add_cap >= new_cap and D[j] >= D[i]:
+            if add_cap >= 0 and D[j] >= D[i]:
                 C[i] = add_cap
                 D[i] = D[j] + 1
             if new_cap > C[i] and D[i] <= 2:
@@ -52,7 +50,9 @@ T = [
     (1000, 1200),
     (200, 600),
     (100, 101),
-    (2000, 2300)
+    (2000, 2300),
+    (200, 800),
+    (400, 700)
 ]
 print(turtles(T))
 
